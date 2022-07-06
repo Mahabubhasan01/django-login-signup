@@ -3,10 +3,12 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .models import sign_up_form
-from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth import authenticate, login as logtoin, logout
 # Create your views here.
 
 # Register or sign up view
+
+
 def sign_up(request):
 
     if request.method == 'POST':
@@ -15,24 +17,34 @@ def sign_up(request):
         fm.save()
         messages.success(request, 'Succesfully created your account')
         fm = sign_up_form()
-        messages.success(request,'Succesfully created your account')
+        messages.success(request, 'Succesfully created your account')
     else:
         fm = sign_up_form(request.POST)
     return render(request, 'auth/signup.html', {'form': fm})
 
 # Login view
+
+
 def login(request):
-    fm = AuthenticationForm(request=request,data=request.POST)
+    fm = AuthenticationForm(request=request, data=request.POST)
     if fm.is_valid():
         username = fm.cleaned_data['username']
         password = fm.cleaned_data['password']
-        user = authenticate(username=username,password=password)
+        user = authenticate(username=username, password=password)
         if user is not None:
+            logtoin(request, user)
+            messages.success(request, 'Login Successfully!!!')
             return HttpResponseRedirect('/profile/')
-    else:        
+    else:
         fm = AuthenticationForm()
-    return render(request, 'auth/login.html',{'form':fm})
+    return render(request, 'auth/login.html', {'form': fm})
 
-#profile view
+# profile view
+
+
 def profile(request):
-    return render(request,'auth/profile.html')
+    return render(request, 'auth/profile.html')
+# Logout view
+def user_logut(request):
+    logout(request)
+    return HttpResponseRedirect('/login/')
