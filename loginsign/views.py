@@ -27,24 +27,32 @@ def sign_up(request):
 
 def login(request):
     fm = AuthenticationForm(request=request, data=request.POST)
-    if fm.is_valid():
-        username = fm.cleaned_data['username']
-        password = fm.cleaned_data['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            logtoin(request, user)
-            messages.success(request, 'Login Successfully!!!')
-            return HttpResponseRedirect('/profile/')
+    if not request.user.is_authenticated:
+        if fm.is_valid():
+            username = fm.cleaned_data['username']
+            password = fm.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                logtoin(request, user)
+                messages.success(request, 'Login Successfully!!!')
+                return HttpResponseRedirect('/profile/')
+        else:
+            fm = AuthenticationForm()
+        return render(request, 'auth/login.html', {'form': fm})
     else:
-        fm = AuthenticationForm()
-    return render(request, 'auth/login.html', {'form': fm})
+        return HttpResponseRedirect('/profile/')    
 
 # profile view
 
 
 def profile(request):
-    return render(request, 'auth/profile.html')
+    if request.user.is_authenticated:
+        return render(request, 'auth/profile.html', {'name': request.user})
+    else:
+        return HttpResponseRedirect('/login/')
 # Logout view
+
+
 def user_logut(request):
     logout(request)
     return HttpResponseRedirect('/login/')
