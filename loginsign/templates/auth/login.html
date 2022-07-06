@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <form action="" method='POST'>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                {{error}}
+            {% endfor %}
+        {% endif %}
+
+       {% for fm in form  %}
+       <h1>{{fm.label_tag}} {{fm}} {{fm.erros|striptags}}</h1><br/>
+       {% endfor %}
+        <input type="submit" value='Submit'>
+    </form>
+    <h2><a href="{% url 'signup'%}">Signup</a></h2>
+</body>
+</html>
